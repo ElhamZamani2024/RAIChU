@@ -615,7 +615,7 @@ class TailoringEnzyme:
                 hetero_atom = structure.get_atom(atoms[0])
                 carbon = structure.get_atom(atoms[1])  # gets oh attached
                 bond = hetero_atom.get_bond(carbon)
-                structure = hydrolysis(structure, bond)
+                structure = hydrolysis(structure, bond)[0]
         elif self.type.name == "REDUCTIVE_LYASE":
             for atoms in self.modification_sites:
                 if len(atoms) != 2:
