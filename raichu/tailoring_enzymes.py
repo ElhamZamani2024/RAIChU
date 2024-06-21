@@ -764,7 +764,7 @@ class TailoringEnzyme:
                 [
                     bond.neighbours
                     for bond in structure.bonds.values()
-                    if "H" not in [atom.type for atom in bond.neighbours]
+                    if "H" not in [atom.type for atom in bond.neighbours] and all(atom.type == "C" for atom in bond.neighbours)
                 ]
             )
 
