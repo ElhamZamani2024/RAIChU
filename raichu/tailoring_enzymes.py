@@ -667,7 +667,7 @@ class TailoringEnzyme:
                 assert destination_c.has_neighbour("H")
                 assert transferred_c.type == "C" and destination_c.type == "C"
 
-                structure = reductive_bond_breakage(source, transferred_c, structure)
+                structure = reductive_bond_breakage(source, transferred_c, structure)[0]
                 structure = addition(destination_c, "C", structure)
                 structure.refresh_structure(find_cycles=True)
 
@@ -898,7 +898,7 @@ class TailoringEnzyme:
                 REDUCED_THREONINE, structure
             )
             possible_sites.extend(
-                [list(t) for t in itertools.product(ser_thr_c, ser_thr_c)]
+                [list(t) for t in itertools.product(ser_thr_c, ser_thr_c) if t[0] != t[1]]
             )
 
         if out_file:
