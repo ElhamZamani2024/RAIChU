@@ -229,12 +229,12 @@ def test_epoxidase():
 def test_methyl_mutase():
     cluster = _helper_build_substrate(
         [
-            TailoringRepresentation("truF", "METHYL_MUTASE", [[ "C_3", "C_64"]]),
+            TailoringRepresentation("truF", "METHYL_MUTASE", [[ "C_49", "C_64"]]),
         ]  
     )
     assert (
         structure_to_smiles(cluster.chain_intermediate)
-        == "NCC(N[C@H](C(N[C@H](C(N[C@H](C(N[C@H](C(N[C@H](C(N[C@H](C(N[C@H](C(N[C@H](C(O)=O)[C@@H](C)O)=O)C(C)S)=O)CC(N)=O)=O)[C@@H](C)O)=O)CO)=O)CC(O)=O)=O)Cc1cnc[nH]1)=O)CCCCN)=O"
+        == "N[C@H](C(N[C@H](C(N[C@H](C(N[C@H](C(N[C@H](C(N[C@H](C(N[C@H](C(N[C@H](C(N[C@H](C(O)=O)[C@@H](C)O)=O)C(C)S)=O)CC(N)=O)=O)CO)=O)CO)=O)CC(O)=O)=O)Cc1cnc[nH]1)=O)CCCCN)=O)C"
     )
 
 def test_monoamine_oxidase():
@@ -496,6 +496,7 @@ def test_hydrolase():
 
     )
 if __name__ == "__main__":
-    test_hydrolase()
+    test_methyl_mutase()
 
 
+ 
