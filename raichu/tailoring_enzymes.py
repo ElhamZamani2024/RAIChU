@@ -502,8 +502,10 @@ class TailoringEnzyme:
                     carbon
                     for carbon in nitrogen.get_neighbours("C")
                     if carbon != carbon_4
-                ][0]
-                assert nitrogen, carbon_5
+                ]
+                assert carbon_5
+                carbon_5 = carbon_5[0]
+                assert nitrogen
                 oxygen = carbon_5.get_neighbour("O")
                 structure = double_bond_reduction(carbon_1, carbon_2, structure)
                 structure = double_bond_reduction(carbon_5, oxygen, structure)
@@ -667,7 +669,7 @@ class TailoringEnzyme:
                 assert destination_c.has_neighbour("H")
                 assert transferred_c.type == "C" and destination_c.type == "C"
 
-                structure = reductive_bond_breakage(source, transferred_c, structure)[0]
+                structure = reductive_bond_breakage(source, transferred_c, structure)
                 structure = addition(destination_c, "C", structure)
                 structure.refresh_structure(find_cycles=True)
 
@@ -773,7 +775,7 @@ class TailoringEnzyme:
             for bond in peptide_bonds:
                 neighbouring_bonds = bond.get_neighbouring_bonds()
                 for neighbouring_bond in neighbouring_bonds:
-                    if not "H" in [atom.type for atom in neighbouring_bond.neighbours]:
+                    if "H" not in [atom.type for atom in neighbouring_bond.neighbours]:
                         possible_sites.append(
                             bond.neighbours + neighbouring_bond.neighbours
                         )
@@ -820,7 +822,9 @@ class TailoringEnzyme:
             n_atoms_with_one_h = find_atoms_for_tailoring(structure, "N")
             for n_atom in n_atoms_with_one_h:
                 if [atom.type for atom in n_atom.neighbours].count("H") == 2:
-                    possible_sites.append([n_atom])
+                    carbon = n_atom.get_neighbour("C")
+                    if carbon and carbon.has_neighbour("H"):
+                        possible_sites.append([n_atom])
         elif self.type.name in ["PROTEASE", "PEPTIDASE"]:
             peptide_bonds = find_bonds(PEPTIDE_BOND, structure)
             for bond in peptide_bonds:
