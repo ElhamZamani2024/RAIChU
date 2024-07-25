@@ -751,10 +751,17 @@ class TailoringEnzyme:
                 [[atom] for atom in find_atoms_for_tailoring(structure, "S")]
             )
 
-        elif self.type.name in ["EPOXIDASE", "DOUBLE_BOND_REDUCTASE"]:
+        elif self.type.name in ["DOUBLE_BOND_REDUCTASE"]:
             peptide_bonds = find_bonds(CC_DOUBLE_BOND, structure)
             for bond in peptide_bonds:
                 possible_sites.append(bond.neighbours)
+
+        elif self.type.name in ["EPOXIDASE"]:
+            peptide_bonds = find_bonds(CC_DOUBLE_BOND, structure)
+            for bond in peptide_bonds:
+                carbon = bond.get_neighbour("C")
+                if carbon and any(neighbour.type == "H" for neighbour in carbon.neighbours):
+                    possible_sites.append(bond.neighbours)
 
         elif self.type.name == "DEHYDROGENASE":
             peptide_bonds = find_bonds(CC_SINGLE_BOND, structure)
