@@ -766,7 +766,16 @@ class TailoringEnzyme:
         elif self.type.name == "DEHYDROGENASE":
             peptide_bonds = find_bonds(CC_SINGLE_BOND, structure)
             for bond in peptide_bonds:
-                possible_sites.append(bond.neighbours)
+        # Retrieve both neighbors of the bond
+                neighbor1, neighbor2 = bond.neighbours
+        
+        # Function to check if an atom has at least one hydrogen neighbor
+                def has_hydrogen_neighbor(atom):
+                    return any(neighbour.type == "H" for neighbour in atom.neighbours)
+        
+        # Check if both neighbors have at least one hydrogen atom
+                if has_hydrogen_neighbor(neighbor1) and has_hydrogen_neighbor(neighbor2):
+                    possible_sites.append(bond.neighbours)
             
         elif self.type.name == "REDUCTIVE_LYASE":
             possible_sites.extend(
