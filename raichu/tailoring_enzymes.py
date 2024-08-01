@@ -198,6 +198,7 @@ class TailoringEnzyme:
                     continue
                 atom1 = structure.get_atom(atoms[0])
                 carbon_1 = structure.get_atom(atoms[1])
+                #assert bond -> double
                 structure = epoxidation(atom1, carbon_1, structure)
         elif self.type.name == "DOUBLE_BOND_REDUCTASE":
             for atoms in self.modification_sites:
@@ -766,14 +767,11 @@ class TailoringEnzyme:
         elif self.type.name == "DEHYDROGENASE":
             peptide_bonds = find_bonds(CC_SINGLE_BOND, structure)
             for bond in peptide_bonds:
-        # Retrieve both neighbors of the bond
                 neighbor1, neighbor2 = bond.neighbours
         
-        # Function to check if an atom has at least one hydrogen neighbor
                 def has_hydrogen_neighbor(atom):
                     return any(neighbour.type == "H" for neighbour in atom.neighbours)
         
-        # Check if both neighbors have at least one hydrogen atom
                 if has_hydrogen_neighbor(neighbor1) and has_hydrogen_neighbor(neighbor2):
                     possible_sites.append(bond.neighbours)
             
@@ -823,15 +821,17 @@ class TailoringEnzyme:
         elif self.type.name == "DEHYDRATASE":
             co_bonds = find_bonds(CO_BOND, structure)
             for co_bond in co_bonds:
-                neighbouring_bonds = co_bond.get_neighbouring_bonds()
-                for neighbouring_bond in neighbouring_bonds:
-                    if (
-                        not "H" in [atom.type for atom in neighbouring_bond.neighbours]
-                        #and not "C=O" in [bond.type for bond in neighbouring_bonds]
-                        and neighbouring_bond.type == "single"
-                    ):
-                        for neighbouring_atom in neighbouring_bond.neighbours:
-                            if neighbouring_atom != co_bond.get_neighbour("C") and neighbouring_atom.has_neighbour("H"):
+                # Überprüfe, ob co_bond eine Einfachbindung ist
+                if co_bond.type == "single":
+                    neighbouring_bonds = co_bond.get_neighbouring_bonds()
+                    for neighbouring_bond in neighbouring_bonds:
+                        if (
+                            not "H" in [atom.type for atom in neighbouring_bond.neighbours]
+                            and neighbouring_bond.type == "single"
+                        ):
+                            # Überprüfe, ob beide Nachbaratome der neighbouring_bond mindestens einen Wasserstoffnachbarn haben
+                            neighbours_have_H = all(neighbouring_atom.has_neighbour("H") for neighbouring_atom in neighbouring_bond.neighbours)
+                            if neighbours_have_H:
                                 possible_sites.append(neighbouring_bond.neighbours)
 
         elif self.type.name == "MONOAMINE_OXIDASE":
