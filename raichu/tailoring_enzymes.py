@@ -13,7 +13,7 @@ from raichu.reactions.general_tailoring_reactions import (
     oxidative_bond_formation,
     epoxidation,
     double_bond_reduction,
-    double_bond_shift,
+    double_bond_isomerase,
     macrolactam_formation,
     cyclodehydration,
     change_chirality,
@@ -113,6 +113,7 @@ class TailoringEnzymeType(Enum):
         for value in TailoringEnzymeType:
             if str(value.name) == label:
                 return value
+        print(label)
         raise ValueError(f"Unknown tailoring enzyme: {label}")
 
 
@@ -198,7 +199,6 @@ class TailoringEnzyme:
                     continue
                 atom1 = structure.get_atom(atoms[0])
                 carbon_1 = structure.get_atom(atoms[1])
-                #assert bond -> double
                 structure = epoxidation(atom1, carbon_1, structure)
         elif self.type.name == "DOUBLE_BOND_REDUCTASE":
             for atoms in self.modification_sites:
@@ -226,7 +226,7 @@ class TailoringEnzyme:
                     raise ValueError(
                         "The bonds need to be adjacent to perform a dauble bond shift."
                     )
-                structure = double_bond_shift(
+                structure = double_bond_isomerase(
                     structure,
                     old_double_bond_atom1,
                     old_double_bond_atom2,
@@ -510,7 +510,7 @@ class TailoringEnzyme:
                 oxygen = carbon_5.get_neighbour("O")
                 structure = double_bond_reduction(carbon_1, carbon_2, structure)
                 structure = double_bond_reduction(carbon_5, oxygen, structure)
-                structure = double_bond_shift(
+                structure = double_bond_isomerase(
                     structure, carbon_3, carbon_4, carbon_4, nitrogen
                 )
                 structure = oxidative_bond_formation(carbon_1, carbon_3, structure)
@@ -654,6 +654,7 @@ class TailoringEnzyme:
                 if len(nitrogen.neighbours)<2:
                     structure.add_atom("H", [nitrogen])
                 structure.refresh_structure(find_cycles=True)
+
         elif self.type.name == "METHYL_MUTASE":
             for atoms in self.modification_sites:
                 if len(atoms) != 2:
