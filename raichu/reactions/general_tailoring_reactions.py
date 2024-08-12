@@ -185,7 +185,7 @@ def dephosphorylation(structure):
     return structure
 
 
-def double_bond_shift(
+def double_bond_isomerase(
     structure,
     old_double_bond_atom1,
     old_double_bond_atom2,
