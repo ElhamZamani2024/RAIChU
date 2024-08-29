@@ -790,10 +790,15 @@ class TailoringEnzyme:
             for bond in peptide_bonds:
                 neighbouring_bonds = bond.get_neighbouring_bonds()
                 for neighbouring_bond in neighbouring_bonds:
-                    if "H" not in [atom.type for atom in neighbouring_bond.neighbours]:
-                        possible_sites.append(
-                            bond.neighbours + neighbouring_bond.neighbours
-                        )
+                    carbon_atoms = [atom for atom in neighbouring_bond.neighbours if atom.type == "C"]
+
+                    # Ensure there are exactly two carbon atoms in the neighbouring bond
+                    if len(carbon_atoms) == 2:
+                        # Check that both carbon atoms have at least one hydrogen neighbour
+                        if all(any(neighbour.type == "H" for neighbour in carbon.neighbours) for carbon in carbon_atoms):
+                            possible_sites.append(
+                                bond.neighbours + neighbouring_bond.neighbours
+                    )
 
         elif self.type.name == "AMINOTRANSFERASE":
             possible_sites.extend(
